@@ -43,10 +43,10 @@
         firmware = three_phase
         hardware = emonTx V3.2/V3.4/Shield
     [[[rx]]]
-        names = power1, power2, power3, power4, Vrms, temp1, temp2, temp3, temp4, temp5, temp6, pulsecount
-        datacodes = h, h, h, h, h, h, h, h, h, h, h, L
-        scales = 1,1,1,1,0.01,0.01,0.01,0.01,0.01,0.01,0.01,1
-        units =W,W,W,W,V,C,C,C,C,C,C,p
+        names = powerL1, powerL2, powerL3, power4, Vrms, I1rms, I2rms, I3rms, I4rms, powF1, powF2, powF3,powF4, temp1, temp2, temp3, temp4, temp5, temp6, pulsecount
+        datacodes = h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, L
+        scales = 1,1,1,1,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,1
+        units = W,W,W,W,V,A,A,A,A,1,1,1,1,C,C,C,C,C,C,p
 
     IMPORTANT NOTE:
     When used in the 3-wire configuration with one line conductor being treated as the 'neutral', the
@@ -296,7 +296,8 @@ const byte PulseMinPeriod = PULSEMINPERIOD;      // minimum period between pulse
 #include <util/crc16.h>
 #include <OneWire.h>
 
-typedef struct { int power1, power2, power3, power4, Vrms, temp[MAXONEWIRE] = {UNUSED_TEMPERATURE,UNUSED_TEMPERATURE,
+typedef struct { int power1, power2, power3, power4, Vrms, I1rms, I2rms, I3rms, I4rms, powF1, powF2, powF3, powF4,
+                  temp[MAXONEWIRE] = {UNUSED_TEMPERATURE,UNUSED_TEMPERATURE,
                   UNUSED_TEMPERATURE,UNUSED_TEMPERATURE,UNUSED_TEMPERATURE,UNUSED_TEMPERATURE};
                   unsigned long pulseCount; } PayloadTx;
 PayloadTx emontx;
@@ -837,6 +838,16 @@ void calculateVIPF()
   emontx.power3=(int)(realPower3+0.5);
   emontx.power4=(int)(realPower4+0.5);
   emontx.Vrms=(int)(Vrms*100+0.5);
+
+  emontx.I1rms=(int)(I1rms*100);
+  emontx.I2rms=(int)(I2rms*100);
+  emontx.I3rms=(int)(I3rms*100);
+  emontx.I4rms=(int)(I4rms*100);
+
+  emontx.powF1=(int)(powerFactor1*100);
+  emontx.powF2=(int)(powerFactor2*100);
+  emontx.powF3=(int)(powerFactor3*100);
+  emontx.powF4=(int)(powerFactor4*100);
 
   sumPeriodVsq      = 0;
   sumPeriodVavg     = 0;
